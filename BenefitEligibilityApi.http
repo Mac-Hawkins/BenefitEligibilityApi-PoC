@@ -1,0 +1,6 @@
+@BenefitEligibilityApi_HostAddress = http://localhost:5250
+
+GET {{BenefitEligibilityApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
