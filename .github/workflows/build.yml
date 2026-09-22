@@ -1,13 +1,13 @@
 name: Build and Test Pipeline
 
 # This workflow triggers on two events:
-# 1. Any push to the 'main' branch
-# 2. Any Pull Request targeting the 'main' branch
+# 1. Any push to the 'master' branch
+# 2. Any Pull Request targeting the 'master' branch
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   # Define a job named 'build' that runs on a fresh Ubuntu virtual machine
