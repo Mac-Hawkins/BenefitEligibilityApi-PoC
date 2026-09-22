@@ -368,4 +368,4 @@ Notes/
 # Environment files
 .env
 appsettings.Development.json
-Properties/launchSettings.json
+BenefitEligibilityApi/Properties/launchSettings.json

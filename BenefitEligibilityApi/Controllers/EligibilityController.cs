@@ -1,5 +1,6 @@
 ﻿using BenefitEligibilityApi.Data;
 using BenefitEligibilityApi.Models;
+using BenefitEligibilityApi.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BenefitEligibilityApi.Controllers
@@ -10,27 +11,21 @@ namespace BenefitEligibilityApi.Controllers
     public class EligibilityController : ControllerBase
     {
 
-        #region Constants
-
-        private const int MaxAllowedUnemployedAnnualIncome = 30000;
-        private const int MaxAllowedEmployedAnnualIncome = 25000;
-        private const int MinAllowedHouseholdSize = 1;
-
-        #endregion
-
         #region Data Members
 
         private readonly ILogger<EligibilityController> _logger;
         private readonly AppDbContext _context;
+        private readonly EligibilityService _eligibilityService;
 
         #endregion
 
         #region Constructor
 
-        public EligibilityController(ILogger<EligibilityController> logger, AppDbContext context)
+        public EligibilityController(ILogger<EligibilityController> logger, AppDbContext context, EligibilityService eligibilityService)
         {
             _logger = logger;
             _context = context;
+            _eligibilityService = eligibilityService;
         }
 
         #endregion
@@ -45,15 +40,7 @@ namespace BenefitEligibilityApi.Controllers
             _logger.LogInformation($"Checking eligibility for benefits. Annual income: {request.AnnualIncome}, Household size: {request.HouseholdSize}");
 
             // Determine elibility based on employment status, income, and household size.
-            bool isEligible;
-            if (request.IsEmployed)
-            {
-                isEligible = request.AnnualIncome <= MaxAllowedEmployedAnnualIncome && request.HouseholdSize >= MinAllowedHouseholdSize;
-            }
-            else
-            {
-                isEligible = request.AnnualIncome <= MaxAllowedUnemployedAnnualIncome && request.HouseholdSize >= MinAllowedHouseholdSize;
-            }
+            bool isEligible = _eligibilityService.CheckEligibility(request.AnnualIncome, request.HouseholdSize, request.IsEmployed);
 
             // Form response.
             var response = new
