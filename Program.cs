@@ -1,25 +1,94 @@
+using Azure.Identity;
+using BenefitEligibilityApi.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+// -----------------------------------------------------------------------------
+// REGISTER CORE SERVICES
+// -----------------------------------------------------------------------------
+// Tells ASP.NET Core to handle incoming HTTP requests and route them to Controllers.
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+// Enables Swagger UI (the web interface I use to test APIs in development).
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// -----------------------------------------------------------------------------
+// SECURE CONFIGURATION
+// -----------------------------------------------------------------------------
+// Retrieve the Azure Key Vault URI configuration value from launchSettings.json
+var keyVaultUri = builder.Configuration["KeyVaultUri"];
+
+// If we successfully retrieved the URI...
+if (!string.IsNullOrEmpty(keyVaultUri))
+{
+    // Connect to Azure Key Vault.
+    builder.Configuration.AddAzureKeyVault(
+        new Uri(keyVaultUri),
+        new DefaultAzureCredential());
+
+    Console.WriteLine("Connected to Azure Key Vault!");
+}
+else
+{
+    Console.WriteLine("KeyVaultUri not found. Using local settings.");
+}
+
+// -----------------------------------------------------------------------------
+// DATABASE CONNECTION
+// -----------------------------------------------------------------------------
+
+// Get the connection string for the Azure SQL DB from the Azure Key Vault.
+var connectionStringValue = builder.Configuration["connection-string-asp-benefits-db-sql-auth-1"];
+
+// Configures Entity Framework to use SQL Server and specifies options on how to retry.
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(connectionStringValue, sqlServerOptions =>
+    {
+        sqlServerOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(30),
+            errorNumbersToAdd: null);
+    }));
+
+
+// -----------------------------------------------------------------------------
+// BUILD THE APPLICATION & INITIALIZE DB
+// -----------------------------------------------------------------------------
 var app = builder.Build();
 
+// Create DB tables if they don't exist.
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    try
+    {
+        db.Database.EnsureCreated();
+        Console.WriteLine("Database tables created successfully.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error creating database: {ex.Message}");
+    }
+}
+
+// -----------------------------------------------------------------------------
+// REQUEST PIPELINE
+// -----------------------------------------------------------------------------
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    // Enable Swagger UI only in development mode.
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+app.UseHttpsRedirection(); // Force HTTPS for security.
+app.UseAuthorization();  // Enable authentication/authorization middleware.
 
-app.UseAuthorization();
-
+// Scans all my controllers for methods decorated with [HttpGet], [HttpPost], etc.,
+// and creates a map so that when a specific URL is hit, it runs that method.
 app.MapControllers();
 
-app.Run();
+app.Run(); // Start the web server and listen for requests.

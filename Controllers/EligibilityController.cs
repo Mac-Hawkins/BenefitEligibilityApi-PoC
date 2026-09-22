@@ -1,5 +1,5 @@
-﻿using BenefitEligibilityApi.Models;
-using Microsoft.AspNetCore.Http;
+﻿using BenefitEligibilityApi.Data;
+using BenefitEligibilityApi.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BenefitEligibilityApi.Controllers
@@ -21,14 +21,16 @@ namespace BenefitEligibilityApi.Controllers
         #region Data Members
 
         private readonly ILogger<EligibilityController> _logger;
+        private readonly AppDbContext _context;
 
         #endregion
 
         #region Constructor
 
-        public EligibilityController(ILogger<EligibilityController> logger)
+        public EligibilityController(ILogger<EligibilityController> logger, AppDbContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
         #endregion
@@ -37,7 +39,7 @@ namespace BenefitEligibilityApi.Controllers
 
         // Route for this would be api/Eligibility/check
         [HttpPost("check")]
-        public IActionResult CheckEligibility([FromBody] EligibilityRequest request)
+        public async Task<IActionResult> CheckEligibility([FromBody] EligibilityRequest request)
         {
             // Log the request
             _logger.LogInformation($"Checking eligibility for benefits. Annual income: {request.AnnualIncome}, Household size: {request.HouseholdSize}");
@@ -61,7 +63,21 @@ namespace BenefitEligibilityApi.Controllers
                 Timestamp = DateTime.UtcNow
             };
 
-            return Ok(response);
+            // Creates a BenefitApplication to store in the DB based on the EligibilityRequest.
+            var application = new BenefitApplication
+            {
+                AnnualIncome = request.AnnualIncome,
+                HouseholdSize = request.HouseholdSize,
+                IsEmployed = request.IsEmployed,
+                IsEligible = isEligible,
+                SubmittedAt = DateTime.UtcNow
+            };
+
+            // Actually saves the data to the DB.
+            _context.Applications.Add(application);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { IsEligible = isEligible, Message = "...", ApplicationId = application.Id });
         }
 
         #endregion
