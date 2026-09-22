@@ -21,3 +21,8 @@ This project is a proof of concept for creating REST APIs use ASP.NET Core and A
 ## 🧪 Testing Strategy
 - **Unit Testing:** xUnit is used to isolate and test business logic (e.g., eligibility calculation rules) without external dependencies.
 - **CI/CD Integration:** Every push triggers an automated pipeline that restores dependencies, builds the solution, and runs all tests.
+
+## 🐳 Containerization
+- **Docker:** Implemented a multi-stage build in the `Dockerfile` to create a container.
+- **Optimization:** Separates the build environment (SDK) from the runtime environment (ASP.NET) to reduce image size.
+- **Deployment:** Ready for deployment to Azure App Service.
