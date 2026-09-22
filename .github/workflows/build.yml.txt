@@ -1,0 +1,45 @@
+name: Build and Test Pipeline
+
+# This workflow triggers on two events:
+# 1. Any push to the 'main' branch
+# 2. Any Pull Request targeting the 'main' branch
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # Define a job named 'build' that runs on a fresh Ubuntu virtual machine
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code from your repository
+      # This downloads the latest code into the runner's workspace
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Install the .NET SDK
+      # Version 8.0.x matches the project's target framework
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      # Step 3: Restore NuGet packages
+      # Downloads all dependencies listed in the .csproj files
+      - name: Restore dependencies
+        run: dotnet restore
+
+      # Step 4: Compile the code
+      # Builds the solution in 'Release' mode (optimized for production)
+      # --no-restore skips the restore step since we just ran it above
+      - name: Build
+        run: dotnet build --no-restore --configuration Release
+
+      # Step 5: Run Unit Tests
+      # Executes all xUnit tests in the solution
+      # --verbosity normal provides readable output in the logs
+      - name: Run tests
+        run: dotnet test --no-build --configuration Release --verbosity normal
