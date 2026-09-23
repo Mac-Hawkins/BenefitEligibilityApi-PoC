@@ -17,24 +17,25 @@ builder.Services.AddSwaggerGen();
 
 // -----------------------------------------------------------------------------
 // SECURE CONFIGURATION
+// Commenting out for now because it's causing an issue with Azure container.
 // -----------------------------------------------------------------------------
 // Retrieve the Azure Key Vault URI configuration value from launchSettings.json
-var keyVaultUri = builder.Configuration["KeyVaultUri"];
+//var keyVaultUri = builder.Configuration["KeyVaultUri"];
 
-// If we successfully retrieved the URI...
-if (!string.IsNullOrEmpty(keyVaultUri))
-{
-    // Connect to Azure Key Vault.
-    builder.Configuration.AddAzureKeyVault(
-        new Uri(keyVaultUri),
-        new DefaultAzureCredential());
+//// If we successfully retrieved the URI...
+//if (!string.IsNullOrEmpty(keyVaultUri))
+//{
+//    // Connect to Azure Key Vault.
+//    builder.Configuration.AddAzureKeyVault(
+//        new Uri(keyVaultUri),
+//        new DefaultAzureCredential());
 
-    Console.WriteLine("Connected to Azure Key Vault!");
-}
-else
-{
-    Console.WriteLine("KeyVaultUri not found. Using local settings.");
-}
+//    Console.WriteLine("Connected to Azure Key Vault!");
+//}
+//else
+//{
+//    Console.WriteLine("KeyVaultUri not found. Using local settings.");
+//}
 
 // -----------------------------------------------------------------------------
 // DATABASE CONNECTION
