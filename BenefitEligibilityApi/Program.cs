@@ -1,4 +1,3 @@
-using Azure.Identity;
 using BenefitEligibilityApi.Data;
 using BenefitEligibilityApi.Services;
 using Microsoft.EntityFrameworkCore;
@@ -41,8 +40,8 @@ builder.Services.AddSwaggerGen();
 // DATABASE CONNECTION
 // -----------------------------------------------------------------------------
 
-// Get the connection string for the Azure SQL DB from the Azure Key Vault.
-// Having an issue with using this and getting the Azure container to work, so commenting out in favor of env vars.
+// NOTE: In production, I would get the connection string for the Azure SQL DB from the Azure Key Vault.
+// For this PoC, I am reading directly from Azure Application Settings for simplicity as it was causing issues with the container.
 //var connectionStringValue = builder.Configuration["connection-string-asp-benefits-db-sql-auth-1"];
 
 // Get the connection string from Azure Environmental Variables.
@@ -85,13 +84,9 @@ using (var scope = app.Services.CreateScope())
 // -----------------------------------------------------------------------------
 // REQUEST PIPELINE
 // -----------------------------------------------------------------------------
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    // Enable Swagger UI only in development mode.
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// Enable Swagger UI.
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection(); // Force HTTPS for security.
 app.UseAuthorization();  // Enable authentication/authorization middleware.

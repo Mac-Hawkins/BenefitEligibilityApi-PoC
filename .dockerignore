@@ -1,0 +1,17 @@
+# Local secrets - never bake into images
+**/Properties/launchSettings.json
+**/appsettings.Development.json
+**/appsettings.*.json
+!**/appsettings.json
+
+# Source control and build artifacts
+**/.git
+**/.vs
+**/bin
+**/obj
+
+# Misc
+**/*.user
+Dockerfile
+.dockerignore
+README.md

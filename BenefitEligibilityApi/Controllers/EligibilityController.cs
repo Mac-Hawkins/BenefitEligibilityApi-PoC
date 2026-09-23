@@ -64,7 +64,7 @@ namespace BenefitEligibilityApi.Controllers
             _context.Applications.Add(application);
             await _context.SaveChangesAsync();
 
-            return Ok(new { IsEligible = isEligible, Message = "...", ApplicationId = application.Id });
+            return Ok(new { IsEligible = isEligible, response.Message, ApplicationId = application.Id });
         }
 
         #endregion
