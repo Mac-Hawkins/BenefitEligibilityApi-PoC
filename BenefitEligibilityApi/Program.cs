@@ -1,5 +1,6 @@
 using Azure.Identity;
 using BenefitEligibilityApi.Data;
+using BenefitEligibilityApi.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,7 +41,11 @@ else
 // -----------------------------------------------------------------------------
 
 // Get the connection string for the Azure SQL DB from the Azure Key Vault.
-var connectionStringValue = builder.Configuration["connection-string-asp-benefits-db-sql-auth-1"];
+// Having an issue with using this and getting the Azure container to work, so commenting out in favor of env vars.
+//var connectionStringValue = builder.Configuration["connection-string-asp-benefits-db-sql-auth-1"];
+
+// Get the connection string from Azure Environmental Variables.
+var connectionStringValue = builder.Configuration.GetConnectionString("DefaultConnection");
 
 // Configures Entity Framework to use SQL Server and specifies options on how to retry.
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -51,6 +56,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
             maxRetryDelay: TimeSpan.FromSeconds(30),
             errorNumbersToAdd: null);
     }));
+
+// Register my service so it will be passed into the constructor of the controller through DI.
+builder.Services.AddScoped<EligibilityService>();
 
 
 // -----------------------------------------------------------------------------

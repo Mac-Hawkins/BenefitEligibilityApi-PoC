@@ -1,7 +1,0 @@
-<Solution>
-  <Folder Name="/Solution Items/">
-    <File Path="README.md" />
-  </Folder>
-  <Project Path="BenefitEligibilityApi.Tests/BenefitEligibilityApi.Tests.csproj" Id="8acdf7bb-d2d3-4175-8e8d-0c55b843d73e" />
-  <Project Path="BenefitEligibilityApi/BenefitEligibilityApi.csproj" />
-</Solution>

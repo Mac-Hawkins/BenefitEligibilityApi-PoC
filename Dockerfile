@@ -3,10 +3,15 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
+# Copy the SOLUTION file first
+COPY ["BenefitEligibilityApi.sln", "./"]
+
 # Copy the solution file and restore dependencies first (caches this layer)
 COPY ["BenefitEligibilityApi/BenefitEligibilityApi.csproj", "BenefitEligibilityApi/"]
 COPY ["BenefitEligibilityApi.Tests/BenefitEligibilityApi.Tests.csproj", "BenefitEligibilityApi.Tests/"]
-RUN dotnet restore
+
+# Restore dependencies using the solution file
+RUN dotnet restore "BenefitEligibilityApi.sln"
 
 # Copy the rest of the source code
 COPY . .
