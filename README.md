@@ -9,13 +9,13 @@ This project is a proof of concept for creating REST APIs using ASP.NET Core and
 ## Tech Stack
 - **Backend:** .NET 8, ASP.NET Core
 - **Database:** Azure SQL Database, Entity Framework Core
-- **Security:** Azure Key Vault, Managed Identities
+- **Security:** Azure App Service Environmental Variables, Managed Identities
 - **Continuous Integration (CI):** GitHub Actions (Automated Build & Test on Push)
 - **Manual Deployment:** Docker images built and pushed locally to Docker Hub
 
 ## Security & Configuration
-- **Environment Separation:** Local development uses launchSettings.json (excluded from Git).
-- **Secrets Management:** I currently store sensitive connection strings and credentials in Azure Key Vault but commented out retrieval for now due to container issues.
+- **Environment Separation:** Local development uses launchSettings.json (excluded from Git), while production relies on Azure App Service Environment Variables.
+- **Secrets Management:** Connection strings are injected via Azure App Service Environment Variables for this deployment. I plan on integrating Azure Key Vault with Managed Identities for improved security.
 
 *Note: `appsettings.Development.json` and `launchSettings.json` are currently excluded from version control to protect local secrets.*
 
@@ -40,7 +40,7 @@ Here are screenshots confirming successful deployment and functionality:
 
 *Swagger interface with request schema*
 
-![Swagger UI - Schema](docs/screenshots/elibility_request_schema.png)
+![Swagger UI - Schema](docs/screenshots/eligibility_request_schema.png)
 
 
 *Swagger interface with sample request*
@@ -61,4 +61,4 @@ Here are screenshots confirming successful deployment and functionality:
 
 - **Continuous Deployment (CD):** Automate the building and deploying of docker images via GitHub Actions.
 - **Azure Functions**: Add some sort of asynchronous workflow to implement in Azure Functions. Possibly triggering an email or daily report.
-- **Key Vault**: Resolve Azure Key Vault integration within the container.
+- **Key Vault**: Resolve Azure Key Vault integration within the container for improved security.
