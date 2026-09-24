@@ -10,7 +10,7 @@ This project is a proof of concept for creating REST APIs using ASP.NET Core and
 - **Backend:** .NET 8, ASP.NET Core
 - **Database:** Azure SQL Database, Entity Framework Core
 - **Security:** Azure Key Vault, Managed Identities
-- **CI/CD:** GitHub Actions (Automated Build & Test on Push)
+- **Continuous Integration (CI):** GitHub Actions (Automated Build & Test on Push)
 - **Manual Deployment:** Docker images built and pushed locally to Docker Hub
 
 ## Security & Configuration
@@ -21,7 +21,7 @@ This project is a proof of concept for creating REST APIs using ASP.NET Core and
 
 ## Testing Strategy
 - **Unit Testing:** xUnit is used to isolate and test business logic (e.g., eligibility calculation rules) without external dependencies.
-- **CI/CD Integration:** Every push triggers an automated pipeline that restores dependencies, builds the solution, and runs all tests.
+- **Continuous Integration (CI):** Every push triggers an automated pipeline that restores dependencies, builds the solution, and runs all tests.
 
 ## Containerization
 - **Docker:** Implemented a multi-stage build in the `Dockerfile` to create a container and pushed it to Docker Hub.
@@ -33,7 +33,6 @@ This project is a proof of concept for creating REST APIs using ASP.NET Core and
 
 - **Azure App Service:** Deployed and functional.
 - **Docker Hub:** Public repository with container image.
-- **GitHub Actions:** Automated Build & Test pipeline (visible on Actions tab of this repo).
 
 ## Deployment Proof
 
@@ -57,3 +56,9 @@ Here are screenshots confirming successful deployment and functionality:
 *SQL Database tables created and data persisted*
 
 ![Database Success](docs/screenshots/azure_db_sample_request_record.png)
+
+## Future Improvements/Additions
+
+- **Continuous Deployment (CD):** Automate the building and deploying of docker images via GitHub Actions.
+- **Azure Functions**: Add some sort of asynchronous workflow to implement in Azure Functions. Possibly triggering an email or daily report.
+- **Key Vault**: Resolve Azure Key Vault integration within the container.
